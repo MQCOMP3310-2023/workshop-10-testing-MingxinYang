@@ -34,15 +34,18 @@ def login_post():
 def signup():
     return render_template('signup.html')
 
+
 @auth.route('/signup', methods=['POST'])
 def signup_post():
     email = request.form.get('email')
     name = request.form.get('name')
     password = request.form.get('password')
 
-    user = db.session.execute(text('select * from user where email = "' + email +'"')).all()
-    if len(user) > 0: # if a user is found, we want to redirect back to signup page so user can try again
-        flash('Email address already exists')  # 'flash' function stores a message accessible in the template code.
+    query = text('SELECT * FROM user WHERE email = :email')
+    user = db.session.execute(query, {'email': email}).fetchone()
+
+    if user is not None:
+        flash('Email address already exists')
         current_app.logger.debug("User email already exists")
         return redirect(url_for('auth.signup'))
 
@@ -54,6 +57,8 @@ def signup_post():
     db.session.commit()
 
     return redirect(url_for('auth.login'))
+
+
 
 @auth.route('/logout')
 @login_required
