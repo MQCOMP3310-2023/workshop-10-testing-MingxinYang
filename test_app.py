@@ -86,5 +86,10 @@ class TestWebApp(unittest.TestCase):
             'password' : 'test123'
         }, follow_redirects = True)
         assert response.status_code == 200 
-
-
+        response = self.client.post('/login', data = {
+            'email' : 'user@test.com',
+            'password' : 'test123'
+        }, follow_redirects = True)
+        assert response.status_code == 200 
+        html=response.get_data(as_text=True)
+        assert not '<script>' in html
