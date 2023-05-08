@@ -44,7 +44,7 @@ def signup_post():
     query = text('SELECT * FROM user WHERE email = :email')
     user = db.session.execute(query, {'email': email}).fetchone()
 
-    if user is not None:
+    if user:
         flash('Email address already exists')
         current_app.logger.debug("User email already exists")
         return redirect(url_for('auth.signup'))
